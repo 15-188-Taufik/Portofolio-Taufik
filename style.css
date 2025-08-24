@@ -1,0 +1,379 @@
+/* ================== General Setup & Variables ================== */
+:root {
+    --bg-color: #121212;
+    --text-color: #FFFFFF;
+    --primary-gold: #CFB53B;
+    --accent-yellow: #FFF44F;
+    --card-bg: #1E1E1E;
+    --font-heading: 'Montserrat', sans-serif;
+    --font-body: 'Lato', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 70px; /* Memberi jarak untuk fixed header */
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-body);
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-heading);
+    color: var(--text-color);
+    line-height: 1.2;
+}
+
+h2 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 3rem;
+    color: var(--primary-gold);
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+a {
+    text-decoration: none;
+    color: var(--accent-yellow);
+}
+
+.btn {
+    display: inline-block;
+    background-color: var(--accent-yellow);
+    color: #000;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: transform 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+}
+
+/* ================== Header / Topbar (BARU) ================== */
+#main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem 0;
+    z-index: 1000; /* Pastikan topbar selalu di atas elemen lain */
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.05));
+    transition: background-color 0.4s ease;
+}
+
+/* Style tambahan saat halaman di-scroll */
+#main-header.scrolled {
+    background-color: rgba(18, 18, 18, 0.9);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+#main-header nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+#main-header nav ul li {
+    margin: 0 1.5rem;
+}
+
+#main-header nav ul li a {
+    color: var(--text-color);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.9rem;
+    padding-bottom: 5px;
+    border-bottom: 2px solid transparent; /* Garis bawah transparan */
+    transition: color 0.3s ease, border-bottom-color 0.3s ease;
+}
+
+#main-header nav ul li a:hover {
+    color: var(--accent-yellow);
+    border-bottom-color: var(--accent-yellow); /* Garis bawah muncul saat hover */
+}
+
+
+/* ================== Hero Section ================== */
+#hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+}
+
+#hero-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.hero-text {
+    position: relative;
+    z-index: 2; /* Pastikan teks selalu di atas canvas */
+    padding: 1rem;
+}
+
+.hero-text h1 {
+    font-size: 3.5rem;
+}
+
+.hero-text h2 {
+    font-size: 1.8rem;
+    color: var(--text-color);
+    margin: 1rem 0;
+}
+
+.hero-text p {
+    font-size: 1.2rem;
+}
+
+
+/* ================== Projects Section ================== */
+#projects {
+    padding: 5rem 0;
+    background-color: #161616;
+}
+
+.project-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+}
+
+.project-card {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease;
+}
+
+.project-card:hover {
+    transform: scale(1.03);
+}
+
+.project-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.project-info {
+    padding: 1.5rem;
+}
+
+.project-info h3 {
+    color: var(--primary-gold);
+    margin-bottom: 0.5rem;
+}
+
+.project-info .tag {
+    display: inline-block;
+    background-color: rgba(255, 244, 79, 0.1);
+    color: var(--accent-yellow);
+    padding: 0.3rem 0.7rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+/* ================== Project Detail Page ================== */
+.project-detail-page {
+    padding: 4rem 0;
+}
+
+.back-button {
+    display: inline-block;
+    margin-bottom: 2rem;
+    color: var(--primary-gold);
+    font-weight: bold;
+}
+
+#project-title {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--primary-gold);
+}
+
+.slider-container {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.slider {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.slider img {
+    width: 100%;
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    font-size: 2rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.slider-btn.prev {
+    left: 10px;
+}
+
+.slider-btn.next {
+    right: 10px;
+}
+
+.project-description {
+    max-width: 800px;
+    margin: 3rem auto 0;
+}
+
+.project-description h2 {
+    text-align: left;
+    margin-bottom: 1rem;
+}
+
+
+.project-links {
+    margin-top: 2rem;
+    text-align: left;
+}
+
+.live-demo-btn {
+    background-color: var(--primary-gold);
+    color: var(--bg-color);
+}
+
+.live-demo-btn:hover {
+    background-color: var(--accent-yellow);
+}
+
+
+/* ================== About Me Section ================== */
+#about {
+    padding: 5rem 0;
+}
+
+.about-container {
+    display: flex;
+    align-items: center;
+    gap: 3rem;
+}
+
+.profile-photo {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid var(--primary-gold);
+}
+
+.about-text h3 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: var(--primary-gold);
+}
+
+.skills span {
+    display: inline-block;
+    background-color: var(--card-bg);
+    padding: 0.5rem 1rem;
+    margin: 0.2rem;
+    border-radius: 5px;
+}
+
+
+/* ================== Contact Section ================== */
+#contact {
+    padding: 5rem 0;
+    text-align: center;
+    background-color: #161616;
+}
+
+.social-icons {
+    margin: 2rem 0;
+}
+
+.social-icons a {
+    font-size: 2rem;
+    margin: 0 1rem;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: var(--accent-yellow);
+}
+
+.email {
+    font-size: 1.2rem;
+}
+
+/* ================== Footer ================== */
+footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+/* ================== Responsive Design ================== */
+@media (max-width: 768px) {
+    h1 { font-size: 2.5rem; }
+    h2 { font-size: 1.8rem; }
+    
+    .project-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .about-container {
+        flex-direction: column;
+        text-align: center;
+    }
+}

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taufik Hidayat NST | Front-End Developer</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Ganti 'your-fontawesome-kit.js' dengan URL kit Anda dari Font Awesome -->
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <!-- =========== Topbar/Navigation =========== -->
+    <header id="main-header">
+        <nav>
+            <ul>
+                <li><a href="#hero">Home</a></li>
+                <li><a href="#projects">Project</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- =========== Hero Section =========== -->
+    <section id="hero">
+        <canvas id="hero-canvas"></canvas> 
+        <div class="hero-text">
+            <h2 style="color: #ffffff; text-align: left; padding-bottom: -8px;">Halo, Saya</h2>
+            <h1 style="color: rgb(255, 255, 255);">TAUFIK HIDAYAT NST</h1>
+            <h2 style="color: #ffffff;">Front-End Developer & Web Programmer</h2>
+            <p style="color: #ffffff;">Membangun pengalaman digital yang inovatif dan menarik.</p>
+        </div>
+    </section>
+
+    <!-- =========== Projects Section =========== -->
+    <section id="projects">
+        <div class="container">
+            <h2>Proyek Unggulan Saya</h2>
+            <div class="project-grid">
+                <!-- Proyek 1 -->
+                <div class="project-card">
+                    <img src="images/bugs8.png" alt="G-THE BUGS Game">
+                    <div class="project-info">
+                        <h3>G-THE BUGS</h3>
+                        <span class="tag">Game Development</span>
+                        <p>Game platformer 2D penuh aksi tentang ksatria serangga melawan kegelapan.</p>
+                        <a href="project-detail.html?project=g-the-bugs" class="btn">Lihat Detail</a>
+                    </div>
+                </div>
+                <!-- Proyek 2 -->
+                <div class="project-card">
+                    <img src="images/ILMU2.jpeg" alt="Sistem Manajemen Perpustakaan">
+                    <div class="project-info">
+                        <h3>Sistem Manajemen Perpustakaan</h3>
+                        <span class="tag">Web Application</span>
+                        <p>Memodernisasi proses perpustakaan Asrama Bright Scholarship dengan antarmuka responsif dan integrasi QR Code.</p>
+                        <a href="project-detail.html?project=library-system" class="btn">Lihat Detail</a>
+                    </div>
+                </div>
+                <!-- Proyek 3 -->
+                <div class="project-card">
+                    <img src="images/digital.jpeg" alt="Dasbor Aktivitas Harian">
+                    <div class="project-info">
+                        <h3>Dasbor Aktivitas Harian (Digital Signage)</h3>
+                        <span class="tag">Digital Signage</span>
+                        <p>Menampilkan status penyelesaian aktivitas harian awardee Bright Scholarship secara real-time di layar monitor.</p>
+                        <a href="project-detail.html?project=dashboard" class="btn">Lihat Detail</a>
+                    </div>
+                </div>
+                <!-- Proyek 4 -->
+                <div class="project-card">
+                    <img src="images/daily2.png" alt="Aplikasi Pencatatan Aktivitas">
+                    <div class="project-info">
+                        <h3>Aplikasi Pencatatan Aktivitas</h3>
+                        <span class="tag">Web Application</span>
+                        <p>Membantu awardee Bright Scholarship mencatat dan memantau aktivitas harian mereka secara digital.</p>
+                        <a href="project-detail.html?project=activity-logger" class="btn">Lihat Detail</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========== About Me Section =========== -->
+    <section id="about">
+        <div class="container about-container">
+            <img src="images/saya.jpg" alt="Taufik Hidayat NST" class="profile-photo">
+            <div class="about-text">
+                <h2>Tentang Saya</h2>
+                <p>Halo! Nama saya TAUFIK HIDAYAT NST, Saat ini saya adalah mahasiswa semester 5 di Institut Teknologi Sumatera (ITERA) program studi Teknik Informatika. Saya memiliki minat besar di bidang front-end dan web programming, dengan fokus membangun pengalaman pengguna yang responsif dan menarik. Saya selalu bersemangat untuk mengembangkan keterampilan teknis, baik melalui proyek pribadi maupun kolaborasi dengan tim. Dengan memadukan pengetahuan teknologi dan kreativitas, saya siap untuk terus belajar dan berkontribusi dalam menciptakan solusi web yang inovatif.</p>
+                <h3>Keahlian</h3>
+                <div class="skills">
+                    <span>C++</span>
+                    <span>Python</span>
+                    <span>HTML</span>
+                    <span>CSS</span>
+                    <span>JavaScript</span>
+                    <span>Desain Grafis</span>
+                    <span>Manajemen Proyek</span>
+                </div>
+                <a href="#" class="btn">Unduh CV Saya</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- =========== Contact Section =========== -->
+    <section id="contact">
+        <div class="container">
+            <h2>Mari Terhubung</h2>
+            <p>Saya terbuka untuk peluang kolaborasi atau sekadar berdiskusi. Jangan ragu untuk menghubungi saya.</p>
+            <div class="social-icons">
+                <a href="https://api.whatsapp.com/send/?phone=6289517954410" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                <a href="https://www.instagram.com/thnst95/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://github.com/15-188-Taufik" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/taufik-hidayat-nst-379a772b5/" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            </div>
+            <p class="email">taufik.hidayatnst02@gmail.com</p>
+        </div>
+    </section>
+
+    <!-- =========== Footer =========== -->
+    <footer>
+        <p>&copy; 2024 Taufik Hidayat NST. Dibuat dengan semangat.</p>
+    </footer>
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Your custom script -->
+    <script src="main.js"></script>
+</body>
+</html>
