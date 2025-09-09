@@ -159,6 +159,7 @@ a {
 .hero-text .greeting {
     text-align: left;
     padding-bottom: 0;
+    color: #fff;
 }
 
 .hero-text h1 {
@@ -168,6 +169,7 @@ a {
 
 .hero-text .subtitle {
     font-size: 1.5rem;
+    color: #fff;
 }
 
 .hero-text .description {
@@ -442,3 +444,4 @@ footer {
         font-size: 0.9rem;
     }
 }
+
