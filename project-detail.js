@@ -3,13 +3,11 @@ const projectsData = {
     'g-the-bugs': {
         title: 'G-THE BUGS',
         images: [
-            'images/bugs8.png',
-            'images/bugs2.png',
-            'images/bugs3.png',
-            'images/bugs4.png',
-            'images/bugs5.png',
-            'images/bugs6.png',
-            'images/bugs7.png'
+            'images/BUGS1.png',
+            'images/BUGS2.png',
+            'images/BUGS3.png',
+            'images/BUGS4.png',
+            'images/BUGS5.png'
         ],
         description: `
             Selamat datang ke dunia "G-THE BUGS", sebuah game platformer 2D yang penuh aksi dan petualangan. Kendalikan seorang ksatria serangga yang gagah berani dalam perjalanannya melalui dunia yang misterius dan berbahaya untuk menghadapi kegelapan yang mengancam.
@@ -25,9 +23,12 @@ const projectsData = {
     'library-system': {
         title: 'Sistem Manajemen Perpustakaan',
         images: [
-            'images/ILMU.jpeg',
-            'images/ILMU2.jpeg',
-            'images/ILMU3.jpeg'
+            'images/ILMU2.PNG',
+            'images/ILMU1.PNG',
+            'images/ILMU3.PNG',
+            'images/ILMU4.PNG', 
+            'images/ILMU5.PNG',
+            'images/ILMU6.PNG'
         ],
         description: `
             Sebuah sistem manajemen perpustakaan berbasis web yang dirancang khusus untuk 
