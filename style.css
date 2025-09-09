@@ -1,188 +1,444 @@
-// =================================================================
-//                 SETUP DASAR THREE.JS
-// =================================================================
-
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.z = 25; 
-
-const renderer = new THREE.WebGLRenderer({
-    canvas: document.querySelector('#hero-canvas'),
-});
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-
-// =================================================================
-//                 MEMBUAT TEKSTUR PARTIKEL
-// =================================================================
-
-const createCircleTexture = () => {
-    const canvas = document.createElement('canvas');
-    canvas.width = 32;
-    canvas.height = 32;
-    const context = canvas.getContext('2d');
-    context.beginPath();
-    context.arc(16, 16, 15, 0, Math.PI * 2);
-    context.fillStyle = '#ffffff';
-    context.fill();
-    return new THREE.CanvasTexture(canvas);
-};
-const circleTexture = createCircleTexture();
-
-
-// =================================================================
-//                 MEMBUAT PARTIKEL (BENTUK GALAKSI)
-// =================================================================
-
-const particlesGeometry = new THREE.BufferGeometry();
-const particlesCount = 20000;
-
-const positions = new Float32Array(particlesCount * 3);
-const colors = new Float32Array(particlesCount * 3);
-
-const parameters = {
-    radius: 20,
-    branches: 3,
-    spin: 1,
-    randomness: 0.5,
-    randomnessPower: 3,
-    insideColor: '#ff6030',
-    outsideColor: '#1b3984'
-};
-
-const colorInside = new THREE.Color(parameters.insideColor);
-const colorOutside = new THREE.Color(parameters.outsideColor);
-
-for (let i = 0; i < particlesCount; i++) {
-    const i3 = i * 3;
-    const radius = Math.random() * parameters.radius;
-    const spinAngle = radius * parameters.spin;
-    const branchAngle = (i % parameters.branches) / parameters.branches * Math.PI * 2;
-    const randomX = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius;
-    const randomY = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius;
-    const randomZ = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius;
-    positions[i3] = Math.cos(branchAngle + spinAngle) * radius + randomX;
-    positions[i3 + 1] = randomY;
-    positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius + randomZ;
-    const mixedColor = colorInside.clone();
-    mixedColor.lerp(colorOutside, radius / parameters.radius);
-    colors[i3] = mixedColor.r;
-    colors[i3 + 1] = mixedColor.g;
-    colors[i3 + 2] = mixedColor.b;
+/* ================== General Setup & Variables ================== */
+:root {
+    --bg-color: #121212;
+    --text-color: #FFFFFF;
+    --primary-gold: #CFB53B;
+    --accent-yellow: #FFF44F;
+    --card-bg: #1E1E1E;
+    --font-heading: 'Montserrat', sans-serif;
+    --font-body: 'Lato', sans-serif;
 }
 
-particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-const particlesMaterial = new THREE.PointsMaterial({
-    map: circleTexture,
-    size: 0.15,
-    transparent: true,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false,
-    vertexColors: true
-});
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 70px;
+}
 
-const particles = new THREE.Points(particlesGeometry, particlesMaterial);
-scene.add(particles);
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1rem; /* Padding dasar untuk mobile */
+}
+
+section {
+    padding: 4rem 0;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-heading);
+    color: var(--text-color);
+    line-height: 1.2;
+}
+
+h2 {
+    font-size: 2.2rem;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    color: var(--primary-gold);
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+a {
+    text-decoration: none;
+    color: var(--accent-yellow);
+}
+
+.btn {
+    display: inline-block;
+    background-color: var(--accent-yellow);
+    color: #000;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    background-color: var(--primary-gold);
+}
+
+/* ================== Header / Topbar ================== */
+#main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem 0;
+    z-index: 1000;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.20), rgba(0, 0, 0, 0.05));
+    transition: background-color 0.4s ease;
+}
+
+#main-header.scrolled {
+    background-color: rgba(18, 18, 18, 0.9);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+#main-header nav ul {
+    list-style: none;
+    display: flex;
+    /* (DIUBAH) Gunakan space-around untuk distribusi otomatis di mobile */
+    justify-content: space-around; 
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+#main-header nav ul li {
+    /* (DIUBAH) Hapus margin horizontal untuk mobile */
+    margin: 0; 
+}
+
+#main-header nav ul li a {
+    color: var(--text-color);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8rem; /* Ukuran font lebih kecil untuk mobile */
+    padding: 5px; /* Beri sedikit padding agar mudah diklik */
+    border-bottom: 2px solid transparent;
+    transition: color 0.3s ease, border-bottom-color 0.3s ease;
+}
+
+#main-header nav ul li a:hover {
+    color: var(--accent-yellow);
+    border-bottom-color: var(--accent-yellow);
+}
+
+/* ================== Hero Section ================== */
+#hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+}
+
+#hero-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    cursor: grab;
+}
+
+#hero-canvas.grabbing {
+    cursor: grabbing;
+}
+
+.hero-text {
+    position: relative;
+    z-index: 2;
+    padding: 1rem;
+    pointer-events: none; 
+}
+
+.hero-text .greeting {
+    text-align: left;
+    padding-bottom: 0;
+}
+
+.hero-text h1 {
+    font-size: 2.5rem;
+    margin: -0.5rem 0 0.5rem 0;
+}
+
+.hero-text .subtitle {
+    font-size: 1.5rem;
+}
+
+.hero-text .description {
+    font-size: 1.1rem;
+}
+
+/* ================== Projects Section ================== */
+#projects {
+    background-color: #161616;
+}
+
+.project-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+.project-card {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    transition: transform 0.3s ease;
+}
+
+.project-card:hover {
+    transform: scale(1.03);
+}
+
+.project-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+}
+
+.project-info {
+    padding: 1.5rem;
+}
+
+.project-info h3 {
+    color: var(--primary-gold);
+    margin-bottom: 0.5rem;
+}
+
+.project-info .tag {
+    display: inline-block;
+    background-color: rgba(255, 244, 79, 0.1);
+    color: var(--accent-yellow);
+    padding: 0.3rem 0.7rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+/* ================== About Me Section ================== */
+.about-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2rem;
+}
+
+.profile-photo {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid var(--primary-gold);
+}
+
+.about-text h3 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    color: var(--primary-gold);
+}
+
+.skills {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.skills span {
+    display: inline-block;
+    background-color: var(--card-bg);
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+}
+
+/* ================== Contact Section ================== */
+#contact {
+    text-align: center;
+    background-color: #161616;
+}
+
+.social-icons {
+    margin: 2rem 0;
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.social-icons a {
+    font-size: 2rem;
+    color: var(--text-color);
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.social-icons a:hover {
+    color: var(--accent-yellow);
+    transform: translateY(-5px);
+}
+
+.email {
+    font-size: 1.1rem;
+    word-break: break-all;
+}
+
+/* ================== Footer ================== */
+footer {
+    text-align: center;
+    padding: 2rem 1rem;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+/* ================== Project Detail Page ================== */
+.project-detail-page {
+    padding: 2rem 0;
+}
+
+.back-button {
+    display: inline-block;
+    margin-bottom: 2rem;
+    color: var(--primary-gold);
+    font-weight: bold;
+}
+
+#project-title {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--primary-gold);
+}
+
+.slider-container {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    overflow: hidden;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.slider {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.slider img {
+    width: 100%;
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.slider-btn.prev { left: 10px; }
+.slider-btn.next { right: 10px; }
+
+.project-description {
+    max-width: 800px;
+    margin: 2rem auto 0;
+}
+
+.project-description h2 {
+    text-align: left;
+    margin-bottom: 1rem;
+}
+
+.project-links {
+    margin-top: 2rem;
+    text-align: left;
+}
+
+.live-demo-btn {
+    background-color: var(--primary-gold);
+    color: var(--bg-color);
+}
+
+.live-demo-btn:hover {
+    background-color: var(--accent-yellow);
+}
 
 
-// =================================================================
-//      INTERAKSI DRAG 360 DERAJAT (UNTUK MOUSE & TOUCHSCREEN)
-// =================================================================
-
-let isDragging = false;
-let previousPosition = { x: 0, y: 0 };
-const canvas = renderer.domElement;
-
-const getPosition = (e) => {
-    // Cek jika ini adalah touch event
-    if (e.touches && e.touches.length > 0) {
-        return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+/* ================== Media Queries (Tablet & Up) ================== */
+@media (min-width: 768px) {
+    .container {
+        padding: 0 2rem;
     }
-    // Jika bukan, ini adalah mouse event
-    return { x: e.clientX, y: e.clientY };
-};
-
-const onDragStart = (e) => {
-    isDragging = true;
-    canvas.classList.add('grabbing');
-    const pos = getPosition(e);
-    previousPosition.x = pos.x;
-    previousPosition.y = pos.y;
-};
-
-const onDragMove = (e) => {
-    if (!isDragging) return;
-    // Mencegah scroll halaman di mobile saat dragging
-    e.preventDefault(); 
     
-    const pos = getPosition(e);
-    const deltaX = pos.x - previousPosition.x;
-    const deltaY = pos.y - previousPosition.y;
-
-    particles.rotation.y += deltaX * 0.005;
-    particles.rotation.x += deltaY * 0.005;
-
-    previousPosition.x = pos.x;
-    previousPosition.y = pos.y;
-};
-
-const onDragEnd = () => {
-    isDragging = false;
-    canvas.classList.remove('grabbing');
-};
-
-// Event Listeners untuk Mouse
-canvas.addEventListener('mousedown', onDragStart);
-canvas.addEventListener('mousemove', onDragMove);
-canvas.addEventListener('mouseup', onDragEnd);
-canvas.addEventListener('mouseleave', onDragEnd);
-
-// Event Listeners untuk Touch
-canvas.addEventListener('touchstart', onDragStart);
-canvas.addEventListener('touchmove', onDragMove, { passive: false }); // `passive: false` penting
-canvas.addEventListener('touchend', onDragEnd);
-canvas.addEventListener('touchcancel', onDragEnd);
-
-
-// =================================================================
-//                 ANIMASI
-// =================================================================
-
-const animate = () => {
-    requestAnimationFrame(animate);
-    if (!isDragging) {
-        particles.rotation.y += 0.0005;
+    /* (BARU) Kembalikan gaya navigasi yang lebih lebar untuk tablet */
+    #main-header nav ul {
+        justify-content: center;
     }
-    renderer.render(scene, camera);
-};
-animate();
 
+    #main-header nav ul li {
+        margin: 0 0.8rem;
+    }
 
-// =================================================================
-//                 RESPONSIVE DESIGN
-// =================================================================
+    section {
+        padding: 5rem 0;
+    }
 
-window.addEventListener('resize', () => {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-});
+    .hero-text h1 {
+        font-size: 3.5rem;
+    }
+    .hero-text .subtitle {
+        font-size: 1.8rem;
+    }
+    .hero-text .description {
+        font-size: 1.2rem;
+    }
 
+    .project-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 
-// =================================================================
-//                 TOPBAR SCROLL EFFECT
-// =================================================================
+    .about-container {
+        flex-direction: row;
+        text-align: left;
+        gap: 3rem;
+    }
 
-const header = document.getElementById('main-header');
-if (header) {
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            header.classList.add('scrolled');
-        } else {
-            header.classList.remove('scrolled');
-        }
-    });
+    .profile-photo {
+        width: 250px;
+        height: 250px;
+    }
+
+    .skills {
+        justify-content: flex-start;
+    }
+}
+
+/* ================== Media Queries (Desktop & Up) ================== */
+@media (min-width: 1024px) {
+    .profile-photo {
+        width: 300px;
+        height: 300px;
+    }
+    
+    /* (BARU) Beri jarak lebih besar lagi untuk desktop */
+    #main-header nav ul li {
+        margin: 0 1.5rem;
+    }
+
+    #main-header nav ul li a {
+        font-size: 0.9rem;
+    }
 }
