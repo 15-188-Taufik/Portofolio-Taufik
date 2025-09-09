@@ -2,116 +2,131 @@
 //                 SETUP DASAR THREE.JS
 // =================================================================
 
-// 1. Scene: Wadah untuk semua objek 3D, kamera, dan cahaya.
 const scene = new THREE.Scene();
-
-// 2. Camera: Sudut pandang kita terhadap scene.
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.z = 30;
+// (DIUBAH) Pindahkan kamera lebih dekat untuk tampilan yang lebih imersif
+camera.position.z = 25; 
 
-// 3. Renderer: "Pelukis" yang menggambar scene dari sudut pandang kamera.
 const renderer = new THREE.WebGLRenderer({
     canvas: document.querySelector('#hero-canvas'),
 });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
+
 // =================================================================
-//                 MEMBUAT TEKSTUR PARTIKEL (BARU)
+//                 MEMBUAT TEKSTUR PARTIKEL
 // =================================================================
 
-// Fungsi untuk membuat tekstur lingkaran secara dinamis
 const createCircleTexture = () => {
     const canvas = document.createElement('canvas');
     canvas.width = 32;
     canvas.height = 32;
     const context = canvas.getContext('2d');
-    
-    // Menggambar lingkaran putih di tengah canvas
     context.beginPath();
-    context.arc(16, 16, 15, 0, Math.PI * 2); // (x, y, radius, startAngle, endAngle)
+    context.arc(16, 16, 15, 0, Math.PI * 2);
     context.fillStyle = '#ffffff';
     context.fill();
-    
     return new THREE.CanvasTexture(canvas);
 };
-
 const circleTexture = createCircleTexture();
 
 
 // =================================================================
-//                 MEMBUAT PARTIKEL (DOT MATRIX)
+//                 MEMBUAT PARTIKEL (BENTUK GALAKSI)
 // =================================================================
 
-const particlesCount = 7000;
 const particlesGeometry = new THREE.BufferGeometry();
-const positions = new Float32Array(particlesCount * 3);
+const particlesCount = 20000;
 
-for (let i = 0; i < particlesCount * 3; i++) {
-    positions[i] = (Math.random() - 0.5) * 100;
+const positions = new Float32Array(particlesCount * 3);
+const colors = new Float32Array(particlesCount * 3);
+
+const parameters = {
+    radius: 20,
+    branches: 3,
+    spin: 1,
+    randomness: 0.5,
+    randomnessPower: 3,
+    insideColor: '#ff6030',
+    outsideColor: '#1b3984'
+};
+
+const colorInside = new THREE.Color(parameters.insideColor);
+const colorOutside = new THREE.Color(parameters.outsideColor);
+
+for (let i = 0; i < particlesCount; i++) {
+    const i3 = i * 3;
+    const radius = Math.random() * parameters.radius;
+    const spinAngle = radius * parameters.spin;
+    const branchAngle = (i % parameters.branches) / parameters.branches * Math.PI * 2;
+    const randomX = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius;
+    const randomY = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius;
+    const randomZ = Math.pow(Math.random(), parameters.randomnessPower) * (Math.random() < 0.5 ? 1 : -1) * parameters.randomness * radius;
+    positions[i3] = Math.cos(branchAngle + spinAngle) * radius + randomX;
+    positions[i3 + 1] = randomY;
+    positions[i3 + 2] = Math.sin(branchAngle + spinAngle) * radius + randomZ;
+    const mixedColor = colorInside.clone();
+    mixedColor.lerp(colorOutside, radius / parameters.radius);
+    colors[i3] = mixedColor.r;
+    colors[i3 + 1] = mixedColor.g;
+    colors[i3 + 2] = mixedColor.b;
 }
 
 particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-// Material: Tampilan dari objek (DIUBAH)
 const particlesMaterial = new THREE.PointsMaterial({
-    // Menggunakan tekstur lingkaran yang sudah kita buat
-    map: circleTexture, 
-    size: 0.25,// Ukuran bisa disesuaikan lagi
-    color: 0xFFC900, // golden color in hex
-    transparent: true, // Wajib true agar latar belakang transparan tekstur berfungsi
+    map: circleTexture,
+    size: 0.15,
+    transparent: true,
     blending: THREE.AdditiveBlending,
-    // Mencegah bug render aneh pada beberapa GPU
-    depthWrite: false, 
+    depthWrite: false,
+    vertexColors: true
 });
 
 const particles = new THREE.Points(particlesGeometry, particlesMaterial);
 scene.add(particles);
 
+
 // =================================================================
-//                 INTERAKSI MOUSE
+//                 INTERAKSI DRAG 360 DERAJAT
 // =================================================================
 
-const mouse = {
-    x: 0,
-    y: 0
-};
+let isDragging = false;
+let previousMousePosition = { x: 0, y: 0 };
+const canvas = renderer.domElement;
 
-window.addEventListener('mousemove', (event) => {
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+canvas.addEventListener('mousedown', () => { isDragging = true; canvas.classList.add('grabbing'); });
+canvas.addEventListener('mouseup', () => { isDragging = false; canvas.classList.remove('grabbing'); });
+canvas.addEventListener('mouseleave', () => { isDragging = false; canvas.classList.remove('grabbing'); });
+
+canvas.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+    const deltaX = e.clientX - previousMousePosition.x;
+    const deltaY = e.clientY - previousMousePosition.y;
+    particles.rotation.y += deltaX * 0.005;
+    particles.rotation.x += deltaY * 0.005;
 });
+
+window.addEventListener('mousemove', (e) => {
+    previousMousePosition = { x: e.clientX, y: e.clientY };
+});
+
 
 // =================================================================
 //                 ANIMASI
 // =================================================================
 
-const clock = new THREE.Clock();
-
 const animate = () => {
     requestAnimationFrame(animate);
-
-    const elapsedTime = clock.getElapsedTime();
-
-    // Animasi gelombang partikel
-    for (let i = 0; i < particlesCount; i++) {
-        const i3 = i * 3;
-        const x = particlesGeometry.attributes.position.array[i3];
-        particlesGeometry.attributes.position.array[i3 + 1] = Math.sin(elapsedTime + x * 0.5) * 2;
+    if (!isDragging) {
+        particles.rotation.y += 0.0005;
     }
-    particlesGeometry.attributes.position.needsUpdate = true;
-
-    // Interaksi mouse
-    const targetX = mouse.x * 0.1;
-    const targetY = mouse.y * 0.1;
-
-    particles.rotation.y += 0.5 * (targetX - particles.rotation.y);
-    particles.rotation.x += 0.5 * (targetY - particles.rotation.x);
-    
     renderer.render(scene, camera);
 };
-
 animate();
+
 
 // =================================================================
 //                 RESPONSIVE DESIGN
@@ -129,7 +144,6 @@ window.addEventListener('resize', () => {
 // =================================================================
 
 const header = document.getElementById('main-header');
-
 if (header) {
     window.addEventListener('scroll', () => {
         if (window.scrollY > 50) {
