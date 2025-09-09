@@ -23,12 +23,12 @@ const projectsData = {
     'library-system': {
         title: 'Sistem Manajemen Perpustakaan',
         images: [
-            'images/ILMU2.PNG',
-            'images/ILMU1.PNG',
-            'images/ILMU3.PNG',
-            'images/ILMU4.PNG', 
-            'images/ILMU5.PNG',
-            'images/ILMU6.PNG'
+            'images/ILMU2.png',
+            'images/ILMU1.png',
+            'images/ILMU3.png',
+            'images/ILMU4.png', 
+            'images/ILMU5.png',
+            'images/ILMU6.png'
         ],
         description: `
             Sebuah sistem manajemen perpustakaan berbasis web yang dirancang khusus untuk 
@@ -137,3 +137,4 @@ function initializeSlider() {
         updateSlider();
     });
 }
+
