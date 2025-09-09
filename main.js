@@ -4,7 +4,6 @@
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-// (DIUBAH) Pindahkan kamera lebih dekat untuk tampilan yang lebih imersif
 camera.position.z = 25; 
 
 const renderer = new THREE.WebGLRenderer({
@@ -90,28 +89,62 @@ scene.add(particles);
 
 
 // =================================================================
-//                 INTERAKSI DRAG 360 DERAJAT
+//      INTERAKSI DRAG 360 DERAJAT (UNTUK MOUSE & TOUCHSCREEN)
 // =================================================================
 
 let isDragging = false;
-let previousMousePosition = { x: 0, y: 0 };
+let previousPosition = { x: 0, y: 0 };
 const canvas = renderer.domElement;
 
-canvas.addEventListener('mousedown', () => { isDragging = true; canvas.classList.add('grabbing'); });
-canvas.addEventListener('mouseup', () => { isDragging = false; canvas.classList.remove('grabbing'); });
-canvas.addEventListener('mouseleave', () => { isDragging = false; canvas.classList.remove('grabbing'); });
+const getPosition = (e) => {
+    // Cek jika ini adalah touch event
+    if (e.touches && e.touches.length > 0) {
+        return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+    // Jika bukan, ini adalah mouse event
+    return { x: e.clientX, y: e.clientY };
+};
 
-canvas.addEventListener('mousemove', (e) => {
+const onDragStart = (e) => {
+    isDragging = true;
+    canvas.classList.add('grabbing');
+    const pos = getPosition(e);
+    previousPosition.x = pos.x;
+    previousPosition.y = pos.y;
+};
+
+const onDragMove = (e) => {
     if (!isDragging) return;
-    const deltaX = e.clientX - previousMousePosition.x;
-    const deltaY = e.clientY - previousMousePosition.y;
+    // Mencegah scroll halaman di mobile saat dragging
+    e.preventDefault(); 
+    
+    const pos = getPosition(e);
+    const deltaX = pos.x - previousPosition.x;
+    const deltaY = pos.y - previousPosition.y;
+
     particles.rotation.y += deltaX * 0.005;
     particles.rotation.x += deltaY * 0.005;
-});
 
-window.addEventListener('mousemove', (e) => {
-    previousMousePosition = { x: e.clientX, y: e.clientY };
-});
+    previousPosition.x = pos.x;
+    previousPosition.y = pos.y;
+};
+
+const onDragEnd = () => {
+    isDragging = false;
+    canvas.classList.remove('grabbing');
+};
+
+// Event Listeners untuk Mouse
+canvas.addEventListener('mousedown', onDragStart);
+canvas.addEventListener('mousemove', onDragMove);
+canvas.addEventListener('mouseup', onDragEnd);
+canvas.addEventListener('mouseleave', onDragEnd);
+
+// Event Listeners untuk Touch
+canvas.addEventListener('touchstart', onDragStart);
+canvas.addEventListener('touchmove', onDragMove, { passive: false }); // `passive: false` penting
+canvas.addEventListener('touchend', onDragEnd);
+canvas.addEventListener('touchcancel', onDragEnd);
 
 
 // =================================================================
