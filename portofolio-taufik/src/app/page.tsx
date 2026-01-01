@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { PrismaClient } from '@prisma/client';
 import Navbar from '@/components/Navbar';
@@ -138,7 +139,7 @@ export default async function Home() {
                 <div className="text-center md:text-left">
                     <h2 className="text-3xl md:text-4xl font-heading font-bold text-white mb-6">About <span className="text-[#CFB53B]">Me</span></h2>
                     <p className="text-gray-400 leading-relaxed mb-6 text-lg">
-                        Halo! Saya <strong className="text-white">Taufik Hidayat NST</strong>, mahasiswa semester 5 di Institut Teknologi Sumatera (ITERA). 
+                        Halo! Saya <strong className="text-white">Taufik Hidayat NST</strong>, mahasiswa semester 6 di Institut Teknologi Sumatera (ITERA). 
                         Saya memiliki passion yang mendalam dalam menciptakan antarmuka web yang intuitif dan responsif.
                     </p>
                     <div className="flex flex-wrap justify-center md:justify-start gap-3">
