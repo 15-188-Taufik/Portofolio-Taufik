@@ -17,10 +17,6 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Taufik Hidayat NST | Portfolio",
   description: "Mahasiswa Informatika ITERA - Front End Developer",
-  icons: {
-    icon: '/favicon.ico',           // Ikon untuk tab browser
-    apple: '/apple-touch-icon.png', // Ikon untuk Apple/iOS
-  },
 };
 
 export default function RootLayout({
