@@ -1,0 +1,30 @@
+// Konfigurasi Client Prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Konfigurasi Database (Langsung menggunakan URL NeonDB kamu)
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://neondb_owner:npg_DgN8lj3oBdTA@ep-delicate-thunder-a1tgwogp-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+}
+
+// Model User untuk Login Admin
+model User {
+  id       String @id @default(cuid())
+  username String @unique
+  password String // Password terenkripsi
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  techStack   String[]
+  images      String[]
+  liveDemoUrl String?
+  githubUrl   String?  // <-- TAMBAHAN: Link GitHub
+  features    String[] // <-- TAMBAHAN: List Fitur
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
