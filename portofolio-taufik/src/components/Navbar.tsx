@@ -31,9 +31,9 @@ export default function Navbar() {
               </li>
             ))}
             <li>
-                <Link href="/login" className="text-[#CFB53B] border border-[#CFB53B]/30 px-4 py-1.5 rounded-full hover:bg-[#CFB53B] hover:text-black transition">
+                {/* <Link href="/login" className="text-[#CFB53B] border border-[#CFB53B]/30 px-4 py-1.5 rounded-full hover:bg-[#CFB53B] hover:text-black transition">
                     Admin
-                </Link>
+                </Link> */}
             </li>
           </ul>
         </nav>

@@ -11,8 +11,8 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET, // Pastikan secret dibaca
   pages: {
-    signIn: "/login",
-    error: '/login', // Jika error, kembalikan ke login saja jangan ke halaman error aneh
+    signIn: "/portal-thn",
+    error: '/portal-thn', // Jika error, kembalikan ke login saja jangan ke halaman error aneh
   },
   providers: [
     CredentialsProvider({
