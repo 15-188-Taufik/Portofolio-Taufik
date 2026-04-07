@@ -150,7 +150,7 @@ export default async function Home() {
                         ))}
                     </div>
                      <div className="mt-10">
-                        <a href="/documents/CV-Taufik-Hidayat-NST.pdf" className="inline-block bg-white text-black font-bold px-8 py-3 rounded-full hover:bg-gray-200 transition" download>
+                        <a href="/documents/CV-Taufik-v2.pdf" className="inline-block bg-white text-black font-bold px-8 py-3 rounded-full hover:bg-gray-200 transition" download>
                             Download CV
                         </a>
                     </div>
