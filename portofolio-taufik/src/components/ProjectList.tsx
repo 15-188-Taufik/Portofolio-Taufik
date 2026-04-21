@@ -27,7 +27,13 @@ export default function ProjectList({ projects }: { projects: Project[] }) {
     ? topProjects.slice(0, 3) 
     : projects.slice(0, 3);
 
-  const displayedProjects = showAll ? projects : defaultProjects;
+  // Urutkan semua proyek agar top project selalu berada di atas
+  const sortedAllProjects = [
+    ...topProjects,
+    ...projects.filter((p) => !p.isTopProject)
+  ];
+
+  const displayedProjects = showAll ? sortedAllProjects : defaultProjects;
 
   return (
     <div>
