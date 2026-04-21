@@ -25,6 +25,7 @@ model Project {
   liveDemoUrl String?
   githubUrl   String?  // <-- TAMBAHAN: Link GitHub
   features    String[] // <-- TAMBAHAN: List Fitur
+  isTopProject Boolean  @default(false) // <-- TAMBAHAN: Fitur Top Project
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

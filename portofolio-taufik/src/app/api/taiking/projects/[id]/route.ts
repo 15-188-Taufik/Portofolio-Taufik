@@ -28,7 +28,8 @@ export async function PUT(
         images: body.images,
         // TAMBAHAN BARU
         githubUrl: body.githubUrl,
-        features: body.features
+        features: body.features,
+        isTopProject: body.isTopProject
       }
     });
     

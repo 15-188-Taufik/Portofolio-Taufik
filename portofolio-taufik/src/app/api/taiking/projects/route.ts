@@ -39,7 +39,8 @@ export async function POST(req: Request) {
         techStack: body.techStack,
         // TAMBAHAN BARU
         githubUrl: body.githubUrl,
-        features: body.features 
+        features: body.features,
+        isTopProject: body.isTopProject || false
       }
     });
     return NextResponse.json(newProject);
