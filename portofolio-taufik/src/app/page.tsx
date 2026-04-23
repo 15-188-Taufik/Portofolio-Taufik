@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { PrismaClient } from '@prisma/client';
 import Navbar from '@/components/Navbar';
 import Image from 'next/image';
-import GalaxyWrapper from '@/components/GalaxyWrapper'; 
-import ProjectList from '@/components/ProjectList'; 
+import GalaxyWrapper from '@/components/GalaxyWrapper';
+import ProjectList from '@/components/ProjectList';
 
 const prisma = new PrismaClient();
 
@@ -25,9 +25,9 @@ export default async function Home() {
 
       {/* =========== Hero Section =========== */}
       <section id="home" className="relative h-screen flex flex-col justify-center items-center text-center overflow-hidden bg-[#050505]">
-        
+
         <GalaxyWrapper />
-        
+
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#050505]/50 to-[#050505] z-0 pointer-events-none"></div>
 
         <div className="relative z-10 px-6 max-w-4xl animate-fade-in-up">
@@ -40,7 +40,7 @@ export default async function Home() {
           <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-10">
             Seorang mahasiswa Informatika ITERA yang gemar mengubah baris kode menjadi pengalaman web yang estetis dan fungsional.
           </p>
-          
+
           <div className="flex justify-center gap-4">
             <Link href="#projects" className="bg-[#CFB53B] text-black font-bold px-8 py-3 rounded-full hover:bg-white transition transform hover:scale-105 shadow-[0_0_20px_rgba(207,181,59,0.4)]">
               Lihat Karyaku
@@ -59,7 +59,7 @@ export default async function Home() {
             <h2 className="text-3xl md:text-4xl font-heading font-bold text-white mb-4">Selected Projects</h2>
             <div className="h-1 w-20 bg-[#CFB53B] mx-auto rounded-full"></div>
           </div>
-          
+
           <ProjectList projects={projects} />
         </div>
       </section>
@@ -67,36 +67,36 @@ export default async function Home() {
       {/* =========== About Section =========== */}
       <section id="about" className="py-24 bg-[#0a0a0a]">
         <div className="container mx-auto px-6 max-w-6xl">
-            <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
-                <div className="relative w-64 h-64 md:w-80 md:h-80 flex-shrink-0">
-                    <div className="absolute inset-0 bg-[#CFB53B] rounded-full blur-[50px] opacity-20 animate-pulse"></div>
-                    <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-[#CFB53B]/50 p-2">
-                        <div className="w-full h-full rounded-full overflow-hidden relative">
-                            <Image src="/images/saya.jpg" alt="Taufik Hidayat NST" fill className="object-cover" />
-                        </div>
-                    </div>
+          <div className="flex flex-col md:flex-row items-center gap-12 lg:gap-20">
+            <div className="relative w-64 h-64 md:w-80 md:h-80 flex-shrink-0">
+              <div className="absolute inset-0 bg-[#CFB53B] rounded-full blur-[50px] opacity-20 animate-pulse"></div>
+              <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-[#CFB53B]/50 p-2">
+                <div className="w-full h-full rounded-full overflow-hidden relative">
+                  <Image src="/images/saya.jpg" alt="Taufik Hidayat NST" fill className="object-cover" />
                 </div>
-
-                <div className="text-center md:text-left">
-                    <h2 className="text-3xl md:text-4xl font-heading font-bold text-white mb-6">About <span className="text-[#CFB53B]">Me</span></h2>
-                    <p className="text-gray-400 leading-relaxed mb-6 text-lg">
-                        Halo! Saya <strong className="text-white">Taufik Hidayat NST</strong>, mahasiswa semester 6 di Institut Teknologi Sumatera (ITERA). 
-                        Saya memiliki passion yang mendalam dalam menciptakan antarmuka web yang intuitif dan responsif.
-                    </p>
-                    <div className="flex flex-wrap justify-center md:justify-start gap-3">
-                        {['Next.js', 'React', 'TypeScript', 'Tailwind', 'Node.js', 'Prisma'].map((skill) => (
-                            <span key={skill} className="bg-[#151515] border border-white/10 text-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:border-[#CFB53B] transition cursor-default">
-                                {skill}
-                            </span>
-                        ))}
-                    </div>
-                     <div className="mt-10">
-                        <a href="/documents/CV-Taufik-v2.pdf" className="inline-block bg-white text-black font-bold px-8 py-3 rounded-full hover:bg-gray-200 transition" download>
-                            Download CV
-                        </a>
-                    </div>
-                </div>
+              </div>
             </div>
+
+            <div className="text-center md:text-left">
+              <h2 className="text-3xl md:text-4xl font-heading font-bold text-white mb-6">About <span className="text-[#CFB53B]">Me</span></h2>
+              <p className="text-gray-400 leading-relaxed mb-6 text-lg">
+                Halo! Saya <strong className="text-white">Taufik Hidayat NST</strong>, mahasiswa semester 6 di Institut Teknologi Sumatera (ITERA).
+                Saya memiliki passion yang mendalam dalam menciptakan antarmuka web yang intuitif dan responsif.
+              </p>
+              <div className="flex flex-wrap justify-center md:justify-start gap-3">
+                {['Next.js', 'React', 'TypeScript', 'Tailwind', 'Node.js', 'Prisma'].map((skill) => (
+                  <span key={skill} className="bg-[#151515] border border-white/10 text-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:border-[#CFB53B] transition cursor-default">
+                    {skill}
+                  </span>
+                ))}
+              </div>
+              <div className="mt-10">
+                <a href="/documents/TaufikHidayatNstResume.pdf" className="inline-block bg-white text-black font-bold px-8 py-3 rounded-full hover:bg-gray-200 transition" download>
+                  Download CV
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -104,9 +104,9 @@ export default async function Home() {
       <footer id="contact" className="py-12 border-t border-white/10 bg-[#050505] text-center">
         <h2 className="text-2xl font-bold text-white mb-6">Let's Work Together</h2>
         <div className="flex justify-center gap-8 mb-8">
-            <a href="https://github.com/15-188-Taufik" target="_blank" className="text-gray-400 hover:text-white hover:scale-110 transition text-2xl">GitHub</a>
-            <a href="https://www.instagram.com/thnst95" target="_blank" className="text-gray-400 hover:text-[#d62976] hover:scale-110 transition text-2xl">Instagram</a>
-            <a href="mailto:taufik.hidayatnst02@gmail.com" className="text-gray-400 hover:text-[#CFB53B] hover:scale-110 transition text-2xl">Email</a>
+          <a href="https://github.com/15-188-Taufik" target="_blank" className="text-gray-400 hover:text-white hover:scale-110 transition text-2xl">GitHub</a>
+          <a href="https://www.instagram.com/thnst95" target="_blank" className="text-gray-400 hover:text-[#d62976] hover:scale-110 transition text-2xl">Instagram</a>
+          <a href="mailto:taufik.hidayatnst02@gmail.com" className="text-gray-400 hover:text-[#CFB53B] hover:scale-110 transition text-2xl">Email</a>
         </div>
         <p className="text-gray-600 text-sm">&copy; 2025 Taufik Hidayat NST. All rights reserved.</p>
       </footer>
