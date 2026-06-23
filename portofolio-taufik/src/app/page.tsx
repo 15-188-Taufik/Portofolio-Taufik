@@ -1,12 +1,11 @@
 export const dynamic = 'force-dynamic';
 import Link from 'next/link';
-import { PrismaClient } from '@prisma/client';
 import Navbar from '@/components/Navbar';
 import Image from 'next/image';
 import GalaxyWrapper from '@/components/GalaxyWrapper';
 import ProjectList from '@/components/ProjectList';
-
-const prisma = new PrismaClient();
+import prisma from '@/lib/prisma';
+import GlobalSmoothScroll from '@/components/GlobalSmoothScroll';
 
 async function getProjects() {
   try {
@@ -16,11 +15,30 @@ async function getProjects() {
   }
 }
 
+async function getSettings() {
+  try {
+    const settingsList = await prisma.setting.findMany();
+    return settingsList.reduce((acc, curr) => {
+      acc[curr.key] = curr.value;
+      return acc;
+    }, {} as Record<string, string>);
+  } catch (error) {
+    return {};
+  }
+}
+
 export default async function Home() {
   const projects = await getProjects();
+  const settings = await getSettings();
+  const cvUrl = settings.cvUrl || "/documents/TaufikHidayatNstResume.pdf";
+  const aboutText = settings.aboutText;
+  const skillsArray = settings.skills
+    ? settings.skills.split(',').map((s: string) => s.trim()).filter(Boolean)
+    : ['Next.js', 'React', 'TypeScript', 'Tailwind', 'Node.js', 'Prisma'];
 
   return (
     <>
+      <GlobalSmoothScroll />
       <Navbar />
 
       {/* =========== Hero Section =========== */}
@@ -38,7 +56,7 @@ export default async function Home() {
             TAUFIK <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#CFB53B] to-[#FFF44F]">HIDAYAT</span>
           </h1>
           <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-10">
-            Seorang mahasiswa Informatika ITERA yang gemar mengubah baris kode menjadi pengalaman web yang estetis dan fungsional.
+            {settings.heroSubtitle || "Seorang mahasiswa Informatika ITERA yang gemar mengubah baris kode menjadi pengalaman web yang estetis dan fungsional."}
           </p>
 
           <div className="flex justify-center gap-4">
@@ -49,18 +67,6 @@ export default async function Home() {
               Kontak
             </Link>
           </div>
-        </div>
-      </section>
-
-      {/* =========== Projects Section =========== */}
-      <section id="projects" className="py-24 bg-[#050505] relative">
-        <div className="container mx-auto px-6 max-w-6xl">
-          <div className="mb-16 text-center">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-white mb-4">Selected Projects</h2>
-            <div className="h-1 w-20 bg-[#CFB53B] mx-auto rounded-full"></div>
-          </div>
-
-          <ProjectList projects={projects} />
         </div>
       </section>
 
@@ -79,24 +85,48 @@ export default async function Home() {
 
             <div className="text-center md:text-left">
               <h2 className="text-3xl md:text-4xl font-heading font-bold text-white mb-6">About <span className="text-[#CFB53B]">Me</span></h2>
-              <p className="text-gray-400 leading-relaxed mb-6 text-lg">
-                Halo! Saya <strong className="text-white">Taufik Hidayat NST</strong>, mahasiswa semester 6 di Institut Teknologi Sumatera (ITERA).
-                Saya memiliki passion yang mendalam dalam menciptakan antarmuka web yang intuitif dan responsif.
-              </p>
+              {aboutText ? (
+                <p className="text-gray-400 leading-relaxed mb-6 text-lg whitespace-pre-line font-light">
+                  {aboutText}
+                </p>
+              ) : (
+                <p className="text-gray-400 leading-relaxed mb-6 text-lg font-light">
+                  Halo! Saya <strong className="text-white">Taufik Hidayat NST</strong>, mahasiswa semester 6 di Institut Teknologi Sumatera (ITERA).
+                  Saya memiliki passion yang mendalam dalam menciptakan antarmuka web yang intuitif dan responsif.
+                </p>
+              )}
               <div className="flex flex-wrap justify-center md:justify-start gap-3">
-                {['Next.js', 'React', 'TypeScript', 'Tailwind', 'Node.js', 'Prisma'].map((skill) => (
+                {skillsArray.map((skill) => (
                   <span key={skill} className="bg-[#151515] border border-white/10 text-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:border-[#CFB53B] transition cursor-default">
                     {skill}
                   </span>
                 ))}
               </div>
               <div className="mt-10">
-                <a href="/documents/TaufikHidayatNstResume.pdf" className="inline-block bg-white text-black font-bold px-8 py-3 rounded-full hover:bg-gray-200 transition" download>
+                <a 
+                  href={cvUrl} 
+                  target={cvUrl.startsWith("http") ? "_blank" : undefined}
+                  rel={cvUrl.startsWith("http") ? "noopener noreferrer" : undefined}
+                  className="inline-block bg-white text-black font-bold px-8 py-3 rounded-full hover:bg-gray-200 transition" 
+                  download
+                >
                   Download CV
                 </a>
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* =========== Projects Section =========== */}
+      <section id="projects" className="py-24 bg-[#050505] relative">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <div className="mb-16 text-center">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-white mb-4">Selected Projects</h2>
+            <div className="h-1 w-20 bg-[#CFB53B] mx-auto rounded-full"></div>
+          </div>
+
+          <ProjectList projects={projects} />
         </div>
       </section>
 

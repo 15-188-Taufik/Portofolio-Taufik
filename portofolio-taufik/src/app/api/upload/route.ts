@@ -25,7 +25,10 @@ export async function POST(req: Request) {
       // Upload ke Cloudinary menggunakan Stream
       return new Promise<string>((resolve, reject) => {
         cloudinary.uploader.upload_stream(
-          { folder: 'portfolio-taufik' }, // Nama folder di Cloudinary
+          { 
+            folder: 'portfolio-taufik',
+            resource_type: 'auto'
+          },
           (error, result) => {
             if (error) reject(error);
             else resolve(result?.secure_url || '');

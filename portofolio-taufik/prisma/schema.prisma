@@ -6,7 +6,7 @@ generator client {
 // Konfigurasi Database (Langsung menggunakan URL NeonDB kamu)
 datasource db {
   provider = "postgresql"
-  url      = "postgresql://neondb_owner:npg_DgN8lj3oBdTA@ep-delicate-thunder-a1tgwogp-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require"
+  url      = env("DATABASE_URL")
 }
 
 // Model User untuk Login Admin
@@ -28,4 +28,9 @@ model Project {
   isTopProject Boolean  @default(false) // <-- TAMBAHAN: Fitur Top Project
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Setting {
+  key   String @id
+  value String
 }
