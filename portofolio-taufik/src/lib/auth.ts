@@ -1,6 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { compare } from "bcrypt";
+import { compare } from "bcryptjs";
 import prisma from "@/lib/prisma";
 
 export const authOptions: NextAuthOptions = {
@@ -20,41 +20,41 @@ export const authOptions: NextAuthOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        console.log("Mencoba login dengan:", credentials?.username);
+        console.log("[Auth-API] Memulai authorize callback untuk user:", credentials?.username);
 
         if (!credentials?.username || !credentials?.password) {
-          console.log("Username/Password kosong");
+          console.warn("[Auth-API] Login dibatalkan: username atau password kosong.");
           return null;
         }
 
-        // Cari user di database
         try {
+          console.log("[Auth-API] Mengambil data user dari database...");
           const user = await prisma.user.findUnique({
             where: { username: credentials.username }
           });
 
           if (!user) {
-            console.log("User tidak ditemukan di Database");
+            console.warn("[Auth-API] Login gagal: User tidak ditemukan di database.");
             return null;
           }
 
-          console.log("User ditemukan:", user.username);
-
-          // Cek password
+          console.log("[Auth-API] User ditemukan, mencocokkan password...");
+          
+          // Menggunakan bcryptjs pure JS untuk verifikasi password aman di serverless
           const isPasswordValid = await compare(credentials.password, user.password);
           
           if (!isPasswordValid) {
-            console.log("Password Salah!");
+            console.warn("[Auth-API] Login gagal: Password salah untuk user:", credentials.username);
             return null;
           }
 
-          console.log("Login Berhasil!");
+          console.log("[Auth-API] Login berhasil untuk user:", user.username);
           return {
             id: user.id,
             name: user.username,
           };
         } catch (error) {
-          console.error("Terjadi Error di Authorize:", error);
+          console.error("[Auth-API] ERROR Kritis di authorize():", error);
           return null;
         }
       }

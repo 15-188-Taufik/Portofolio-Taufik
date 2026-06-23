@@ -18,25 +18,59 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
+    console.log("[Login-Form] Menyerahkan form...");
+
     if (!captchaToken) {
+      console.warn("[Login-Form] reCAPTCHA belum diselesaikan.");
       setError("Mohon centang 'I'm not a robot' terlebih dahulu.");
       setLoading(false);
       return;
     }
 
-    // Login menggunakan NextAuth
-    const res = await signIn("credentials", {
-      username,
-      password,
-      redirect: false,
+    console.log("[Login-Form] Mencoba masuk dengan username:", username);
+
+    // Timeout fallback 10 detik
+    let isTimedOut = false;
+    const timeoutPromise = new Promise<null>((_, reject) => {
+      setTimeout(() => {
+        isTimedOut = true;
+        console.error("[Login-Form] Login Timeout! Server / Database tidak merespon dalam 10 detik.");
+        reject(new Error("TIMEOUT"));
+      }, 10000);
     });
 
-    if (res?.error) {
-      setError("Login Gagal! Username atau Password salah.");
+    try {
+      // Balapan antara proses login dan timeout 10 detik
+      const res = await Promise.race([
+        signIn("credentials", {
+          username,
+          password,
+          redirect: false,
+        }),
+        timeoutPromise
+      ]);
+
+      if (isTimedOut) return; // Mencegah pemrosesan ganda jika callback terpanggil lambat
+
+      console.log("[Login-Form] Hasil respon dari NextAuth:", res);
+
+      if (res?.error) {
+        console.warn("[Login-Form] Login gagal:", res.error);
+        setError("Login Gagal! Username atau Password salah.");
+        setLoading(false);
+      } else {
+        console.log("[Login-Form] Login sukses! Mengalihkan ke dashboard...");
+        router.push("/admin/dashboard");
+      }
+    } catch (err: any) {
+      console.error("[Login-Form] Terjadi kesalahan saat sign-in:", err);
+      
+      if (err?.message === "TIMEOUT") {
+        setError("Waktu masuk habis (Timeout). Database NeonDB / Server lambat merespon. Silakan coba lagi.");
+      } else {
+        setError("Terjadi kesalahan sistem saat mencoba masuk. Silakan periksa koneksi internet Anda.");
+      }
       setLoading(false);
-    } else {
-      // Jika berhasil, arahkan ke dashboard
-      router.push("/admin/dashboard");
     }
   };
 
