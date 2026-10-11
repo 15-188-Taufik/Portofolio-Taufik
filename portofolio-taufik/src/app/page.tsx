@@ -3,7 +3,9 @@ import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Image from 'next/image';
 import GalaxyWrapper from '@/components/GalaxyWrapper';
-import ProjectList from '@/components/ProjectList';
+import InteractiveProjects from '@/components/InteractiveProjects';
+// ProjectList is imported inside InteractiveProjects component
+// import SkillSectionClient from '@/components/SkillSectionClient';
 import prisma from '@/lib/prisma';
 import GlobalSmoothScroll from '@/components/GlobalSmoothScroll';
 
@@ -18,10 +20,13 @@ async function getProjects() {
 async function getSettings() {
   try {
     const settingsList = await prisma.setting.findMany();
-    return settingsList.reduce((acc, curr) => {
-      acc[curr.key] = curr.value;
-      return acc;
-    }, {} as Record<string, string>);
+    const settingsMap: Record<string, string> = {};
+
+    for (const setting of settingsList) {
+      settingsMap[setting.key] = setting.value;
+    }
+
+    return settingsMap;
   } catch (error) {
     return {};
   }
@@ -78,7 +83,7 @@ export default async function Home() {
               <div className="absolute inset-0 bg-[#CFB53B] rounded-full blur-[50px] opacity-20 animate-pulse"></div>
               <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-[#CFB53B]/50 p-2">
                 <div className="w-full h-full rounded-full overflow-hidden relative">
-                  <Image src="/images/saya.jpg" alt="Taufik Hidayat NST" fill className="object-cover" />
+                  <Image src={settings.aboutImageUrl || "/images/saya.jpg"} alt="Taufik Hidayat NST" fill className="object-cover" />
                 </div>
               </div>
             </div>
@@ -95,13 +100,9 @@ export default async function Home() {
                   Saya memiliki passion yang mendalam dalam menciptakan antarmuka web yang intuitif dan responsif.
                 </p>
               )}
-              <div className="flex flex-wrap justify-center md:justify-start gap-3">
-                {skillsArray.map((skill) => (
-                  <span key={skill} className="bg-[#151515] border border-white/10 text-gray-300 px-4 py-2 rounded-lg text-sm font-medium hover:border-[#CFB53B] transition cursor-default">
-                    {skill}
-                  </span>
-                ))}
-              </div>
+              
+
+              
               <div className="mt-10">
                 <a 
                   href={cvUrl} 
@@ -122,11 +123,11 @@ export default async function Home() {
       <section id="projects" className="py-24 bg-[#050505] relative">
         <div className="container mx-auto px-6 max-w-6xl">
           <div className="mb-16 text-center">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold text-white mb-4">Selected Projects</h2>
+            <h2 className="text-3xl md:text-4xl font-heading font-bold text-white mb-4">Projects</h2>
             <div className="h-1 w-20 bg-[#CFB53B] mx-auto rounded-full"></div>
           </div>
 
-          <ProjectList projects={projects} />
+          <InteractiveProjects projects={projects} skillsArray={skillsArray} />
         </div>
       </section>
 
@@ -137,6 +138,7 @@ export default async function Home() {
           <a href="https://github.com/15-188-Taufik" target="_blank" className="text-gray-400 hover:text-white hover:scale-110 transition text-2xl">GitHub</a>
           <a href="https://www.instagram.com/thnst95" target="_blank" className="text-gray-400 hover:text-[#d62976] hover:scale-110 transition text-2xl">Instagram</a>
           <a href="mailto:taufik.hidayatnst02@gmail.com" className="text-gray-400 hover:text-[#CFB53B] hover:scale-110 transition text-2xl">Email</a>
+          <a href="https://wa.me/089517954410" target="_blank" className="text-gray-400 hover:text-[#25D366] hover:scale-110 transition text-2xl">WhatsApp</a>
         </div>
         <p className="text-gray-600 text-sm">&copy; 2025 Taufik Hidayat NST. All rights reserved.</p>
       </footer>

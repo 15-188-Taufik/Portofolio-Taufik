@@ -29,10 +29,11 @@ export default function LoginPage() {
 
     console.log("[Login-Form] Mencoba masuk dengan username:", username);
 
-    // Timeout fallback 10 detik
+    // Timeout fallback 10 detik – cancellable timeout
     let isTimedOut = false;
+    let timeoutHandle: NodeJS.Timeout;
     const timeoutPromise = new Promise<null>((_, reject) => {
-      setTimeout(() => {
+      timeoutHandle = setTimeout(() => {
         isTimedOut = true;
         console.error("[Login-Form] Login Timeout! Server / Database tidak merespon dalam 10 detik.");
         reject(new Error("TIMEOUT"));
@@ -40,17 +41,19 @@ export default function LoginPage() {
     });
 
     try {
-      // Balapan antara proses login dan timeout 10 detik
+      // Race between signIn and timeout
       const res = await Promise.race([
         signIn("credentials", {
           username,
           password,
           redirect: false,
         }),
-        timeoutPromise
+        timeoutPromise,
       ]);
 
-      if (isTimedOut) return; // Mencegah pemrosesan ganda jika callback terpanggil lambat
+      // If signIn resolved first, cancel the timeout to avoid stray error log
+      if (!isTimedOut) clearTimeout(timeoutHandle);
+      if (isTimedOut) return; // Prevent further processing if timeout already fired
 
       console.log("[Login-Form] Hasil respon dari NextAuth:", res);
 

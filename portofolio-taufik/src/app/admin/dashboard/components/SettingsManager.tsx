@@ -6,9 +6,12 @@ export default function SettingsManager() {
   const [aboutText, setAboutText] = useState("");
   const [heroSubtitle, setHeroSubtitle] = useState("");
   const [skills, setSkills] = useState("");
-  
+  const [aboutImageUrl, setAboutImageUrl] = useState("");
+
   const [cvFile, setCvFile] = useState<File | null>(null);
+  const [aboutImageFile, setAboutImageFile] = useState<File | null>(null);
   const [uploadingCv, setUploadingCv] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [savingAbout, setSavingAbout] = useState(false);
   const [savingHero, setSavingHero] = useState(false);
   const [savingSkills, setSavingSkills] = useState(false);
@@ -25,6 +28,7 @@ export default function SettingsManager() {
       setAboutText(res.data.aboutText || "");
       setHeroSubtitle(res.data.heroSubtitle || "");
       setSkills(res.data.skills || "");
+      setAboutImageUrl(res.data.aboutImageUrl || "");
       setLoading(false);
     } catch (error) {
       console.error("Gagal mengambil data settings", error);
@@ -32,52 +36,71 @@ export default function SettingsManager() {
     }
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleCvFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       setCvFile(e.target.files[0]);
+    }
+  };
+
+  const handleImageFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setAboutImageFile(e.target.files[0]);
     }
   };
 
   const handleCvUpload = async (e: FormEvent) => {
     e.preventDefault();
     if (!cvFile) return;
-
     setUploadingCv(true);
     try {
       const formData = new FormData();
       formData.append("file", cvFile);
-
       const uploadRes = await axios.post("/api/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
       const uploadedUrl = uploadRes.data.urls[0];
-
-      await axios.post("/api/settings", {
-        key: "cvUrl",
-        value: uploadedUrl,
-      });
-
+      await axios.post("/api/settings", { key: "cvUrl", value: uploadedUrl });
       setCvUrl(uploadedUrl);
       setCvFile(null);
       alert("CV berhasil diperbarui!");
     } catch (error: any) {
       console.error("Gagal upload CV", error);
-      const errMsg = error.response?.data?.error || error.message || "Terjadi kesalahan tidak dikenal";
-      alert(`Gagal mengunggah CV baru: ${errMsg}`);
+      const msg = error.response?.data?.error || error.message || "Terjadi kesalahan tidak dikenal";
+      alert(`Gagal mengunggah CV: ${msg}`);
     } finally {
       setUploadingCv(false);
+    }
+  };
+
+  const handleImageUpload = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!aboutImageFile) return;
+    setUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", aboutImageFile);
+      const uploadRes = await axios.post("/api/upload", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      const uploadedUrl = uploadRes.data.urls[0];
+      await axios.post("/api/settings", { key: "aboutImageUrl", value: uploadedUrl });
+      setAboutImageUrl(uploadedUrl);
+      setAboutImageFile(null);
+      alert("Foto About Me berhasil diperbarui!");
+    } catch (error: any) {
+      console.error("Gagal upload foto About Me", error);
+      const msg = error.response?.data?.error || error.message || "Terjadi kesalahan tidak dikenal";
+      alert(`Gagal mengunggah foto: ${msg}`);
+    } finally {
+      setUploadingImage(false);
     }
   };
 
   const handleAboutSave = async (e: FormEvent) => {
     e.preventDefault();
     setSavingAbout(true);
-
     try {
-      await axios.post("/api/settings", {
-        key: "aboutText",
-        value: aboutText,
-      });
+      await axios.post("/api/settings", { key: "aboutText", value: aboutText });
       alert("Deskripsi About Me berhasil disimpan!");
     } catch (error) {
       console.error("Gagal menyimpan About Me", error);
@@ -90,12 +113,8 @@ export default function SettingsManager() {
   const handleHeroSave = async (e: FormEvent) => {
     e.preventDefault();
     setSavingHero(true);
-
     try {
-      await axios.post("/api/settings", {
-        key: "heroSubtitle",
-        value: heroSubtitle,
-      });
+      await axios.post("/api/settings", { key: "heroSubtitle", value: heroSubtitle });
       alert("Subjudul Hero berhasil disimpan!");
     } catch (error) {
       console.error("Gagal menyimpan Subjudul Hero", error);
@@ -108,12 +127,8 @@ export default function SettingsManager() {
   const handleSkillsSave = async (e: FormEvent) => {
     e.preventDefault();
     setSavingSkills(true);
-
     try {
-      await axios.post("/api/settings", {
-        key: "skills",
-        value: skills,
-      });
+      await axios.post("/api/settings", { key: "skills", value: skills });
       alert("Daftar keahlian berhasil disimpan!");
     } catch (error) {
       console.error("Gagal menyimpan Skills", error);
@@ -135,6 +150,7 @@ export default function SettingsManager() {
 
       <div className="flex flex-col gap-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* CV Section */}
           <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-800 flex flex-col justify-between">
             <div>
               <h3 className="text-lg font-bold text-[#FFF44F] mb-4 border-b border-gray-700 pb-2">
@@ -143,16 +159,10 @@ export default function SettingsManager() {
               <p className="text-xs text-gray-400 mb-4 leading-relaxed">
                 Unggah file resume/CV Anda dalam format PDF. File ini akan menggantikan CV lama Anda di link unduh halaman depan secara otomatis.
               </p>
-
               <div className="mb-4">
                 <span className="text-xs text-gray-400 block mb-1">CV Aktif Saat Ini:</span>
                 {cvUrl ? (
-                  <a
-                    href={cvUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-blue-400 hover:underline break-all block"
-                  >
+                  <a href={cvUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-400 hover:underline break-all block">
                     {cvUrl}
                   </a>
                 ) : (
@@ -160,58 +170,70 @@ export default function SettingsManager() {
                 )}
               </div>
             </div>
-
             <form onSubmit={handleCvUpload} className="flex flex-col gap-3 mt-4">
               <div className="relative border border-dashed border-gray-600 hover:border-[#FFF44F] p-4 rounded text-center cursor-pointer transition">
-                <input
-                  type="file"
-                  accept=".pdf"
-                  onChange={handleFileChange}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
+                <input type="file" accept=".pdf" onChange={handleCvFileChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                 <p className="text-xs text-gray-400">
                   {cvFile ? `File terpilih: ${cvFile.name}` : "Pilih file PDF CV baru"}
                 </p>
               </div>
-              
-              <button
-                type="submit"
-                disabled={uploadingCv || !cvFile}
-                className="w-full bg-[#FFF44F] hover:bg-[#CFB53B] text-black font-bold py-2 rounded text-sm transition disabled:opacity-50 cursor-pointer font-semibold"
-              >
+              <button type="submit" disabled={uploadingCv || !cvFile} className="w-full bg-[#FFF44F] hover:bg-[#CFB53B] text-black font-bold py-2 rounded text-sm transition disabled:opacity-50 cursor-pointer font-semibold">
                 {uploadingCv ? "Mengunggah..." : "Unggah CV Baru"}
               </button>
             </form>
           </div>
 
-          <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-800 flex flex-col">
-            <h3 className="text-lg font-bold text-[#FFF44F] mb-4 border-b border-gray-700 pb-2">
-              Kelola Teks About Me
-            </h3>
-            <p className="text-xs text-gray-400 mb-4 leading-relaxed">
-              Perbarui deskripsi biografi singkat Anda yang muncul di section "About Me" pada halaman utama.
-            </p>
-
-            <form onSubmit={handleAboutSave} className="flex flex-col gap-4 flex-grow justify-between">
-              <textarea
-                className="w-full p-3 bg-black/40 border border-gray-700 rounded text-sm text-white focus:border-[#FFF44F] focus:outline-none transition h-36 resize-none leading-relaxed"
-                placeholder="Tulis biografi singkat Anda di sini..."
-                value={aboutText}
-                onChange={(e) => setAboutText(e.target.value)}
-                required
-              />
-              
-              <button
-                type="submit"
-                disabled={savingAbout}
-                className="w-full bg-[#FFF44F] hover:bg-[#CFB53B] text-black font-bold py-2 rounded text-sm transition disabled:opacity-50 cursor-pointer mt-4 font-semibold"
-              >
-                {savingAbout ? "Menyimpan..." : "Simpan Perubahan"}
+          {/* About Image Section */}
+          <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-800 flex flex-col justify-between">
+            <div>
+              <h3 className="text-lg font-bold text-[#FFF44F] mb-4 border-b border-gray-700 pb-2">
+                Kelola Foto About Me
+              </h3>
+              <p className="text-xs text-gray-400 mb-4 leading-relaxed">
+                Unggah foto terbaru Anda. Foto ini akan tampil di bagian "About Me" pada halaman utama.
+              </p>
+              <div className="mb-4">
+                <span className="text-xs text-gray-400 block mb-1">Foto Saat Ini:</span>
+                {aboutImageUrl ? (
+                  <a href={aboutImageUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-400 hover:underline break-all block">
+                    {aboutImageUrl}
+                  </a>
+                ) : (
+                  <span className="text-sm text-gray-500 italic">Menggunakan foto default</span>
+                )}
+              </div>
+            </div>
+            <form onSubmit={handleImageUpload} className="flex flex-col gap-3 mt-4">
+              <div className="relative border border-dashed border-gray-600 hover:border-[#FFF44F] p-4 rounded text-center cursor-pointer transition">
+                <input type="file" accept="image/*" onChange={handleImageFileChange} className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                <p className="text-xs text-gray-400">
+                  {aboutImageFile ? `File terpilih: ${aboutImageFile.name}` : "Pilih foto baru"}
+                </p>
+              </div>
+              <button type="submit" disabled={uploadingImage || !aboutImageFile} className="w-full bg-[#FFF44F] hover:bg-[#CFB53B] text-black font-bold py-2 rounded text-sm transition disabled:opacity-50 cursor-pointer font-semibold">
+                {uploadingImage ? "Mengunggah..." : "Unggah Foto Baru"}
               </button>
             </form>
           </div>
         </div>
 
+        {/* About Text Section */}
+        <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-800 flex flex-col">
+          <h3 className="text-lg font-bold text-[#FFF44F] mb-4 border-b border-gray-700 pb-2">
+            Kelola Teks About Me
+          </h3>
+          <p className="text-xs text-gray-400 mb-4 leading-relaxed">
+            Perbarui deskripsi biografi singkat Anda yang muncul di section "About Me" pada halaman utama.
+          </p>
+          <form onSubmit={handleAboutSave} className="flex flex-col gap-4 flex-grow justify-between">
+            <textarea className="w-full p-3 bg-black/40 border border-gray-700 rounded text-sm text-white focus:border-[#FFF44F] focus:outline-none transition h-36 resize-none leading-relaxed" placeholder="Tulis biografi singkat Anda di sini..." value={aboutText} onChange={(e) => setAboutText(e.target.value)} required />
+            <button type="submit" disabled={savingAbout} className="w-full bg-[#FFF44F] hover:bg-[#CFB53B] text-black font-bold py-2 rounded text-sm transition disabled:opacity-50 cursor-pointer mt-4 font-semibold">
+              {savingAbout ? "Menyimpan..." : "Simpan Perubahan"}
+            </button>
+          </form>
+        </div>
+
+        {/* Hero & Skills sections */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="bg-[#1E1E1E] p-6 rounded-xl border border-gray-800 flex flex-col">
             <h3 className="text-lg font-bold text-[#FFF44F] mb-4 border-b border-gray-700 pb-2">
@@ -220,21 +242,9 @@ export default function SettingsManager() {
             <p className="text-xs text-gray-400 mb-4 leading-relaxed">
               Ubah deskripsi subjudul perkenalan singkat yang berada tepat di bawah nama besar Anda di bagian atas halaman (Hero Section).
             </p>
-
             <form onSubmit={handleHeroSave} className="flex flex-col gap-4 flex-grow justify-between">
-              <textarea
-                className="w-full p-3 bg-black/40 border border-gray-700 rounded text-sm text-white focus:border-[#FFF44F] focus:outline-none transition h-36 resize-none leading-relaxed"
-                placeholder="Seorang mahasiswa Informatika ITERA yang gemar mengubah..."
-                value={heroSubtitle}
-                onChange={(e) => setHeroSubtitle(e.target.value)}
-                required
-              />
-              
-              <button
-                type="submit"
-                disabled={savingHero}
-                className="w-full bg-[#FFF44F] hover:bg-[#CFB53B] text-black font-bold py-2 rounded text-sm transition disabled:opacity-50 cursor-pointer mt-4 font-semibold"
-              >
+              <textarea className="w-full p-3 bg-black/40 border border-gray-700 rounded text-sm text-white focus:border-[#FFF44F] focus:outline-none transition h-36 resize-none leading-relaxed" placeholder="Seorang mahasiswa Informatika ITERA yang gemar mengubah..." value={heroSubtitle} onChange={(e) => setHeroSubtitle(e.target.value)} required />
+              <button type="submit" disabled={savingHero} className="w-full bg-[#FFF44F] hover:bg-[#CFB53B] text-black font-bold py-2 rounded text-sm transition disabled:opacity-50 cursor-pointer mt-4 font-semibold">
                 {savingHero ? "Menyimpan..." : "Simpan Subjudul"}
               </button>
             </form>
@@ -247,21 +257,9 @@ export default function SettingsManager() {
             <p className="text-xs text-gray-400 mb-4 leading-relaxed">
               Tuliskan teknologi/keahlian yang Anda kuasai. Pisahkan masing-masing keahlian menggunakan tanda koma (contoh: Next.js, React, Tailwind).
             </p>
-
             <form onSubmit={handleSkillsSave} className="flex flex-col gap-4 flex-grow justify-between">
-              <textarea
-                className="w-full p-3 bg-black/40 border border-gray-700 rounded text-sm text-white focus:border-[#FFF44F] focus:outline-none transition h-36 resize-none leading-relaxed"
-                placeholder="Next.js, React, TypeScript, Tailwind, Node.js, Prisma"
-                value={skills}
-                onChange={(e) => setSkills(e.target.value)}
-                required
-              />
-              
-              <button
-                type="submit"
-                disabled={savingSkills}
-                className="w-full bg-[#FFF44F] hover:bg-[#CFB53B] text-black font-bold py-2 rounded text-sm transition disabled:opacity-50 cursor-pointer mt-4 font-semibold"
-              >
+              <textarea className="w-full p-3 bg-black/40 border border-gray-700 rounded text-sm text-white focus:border-[#FFF44F] focus:outline-none transition h-36 resize-none leading-relaxed" placeholder="Next.js, React, TypeScript, Tailwind, Node.js, Prisma" value={skills} onChange={(e) => setSkills(e.target.value)} required />
+              <button type="submit" disabled={savingSkills} className="w-full bg-[#FFF44F] hover:bg-[#CFB53B] text-black font-bold py-2 rounded text-sm transition disabled:opacity-50 cursor-pointer mt-4 font-semibold">
                 {savingSkills ? "Menyimpan..." : "Simpan Keahlian"}
               </button>
             </form>

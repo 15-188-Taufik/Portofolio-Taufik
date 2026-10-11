@@ -33,7 +33,11 @@ export default function GalaxyBackground() {
         context.fillStyle = '#ffffff';
         context.fill();
       }
-      return new THREE.CanvasTexture(canvas);
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.minFilter = THREE.LinearFilter;
+      tex.magFilter = THREE.LinearFilter;
+      tex.generateMipmaps = false;
+      return tex;
     };
     const circleTexture = createCircleTexture();
 
@@ -141,6 +145,12 @@ const handlePointerUp = () => {
     window.addEventListener('pointermove', handlePointerMove);
     window.addEventListener('pointerup', handlePointerUp);
     window.addEventListener('pointercancel', handlePointerUp);
+    // Desktop mousemove for continuous rotation
+    const handleMouseMove = (e: MouseEvent) => {
+      pointerX += e.movementX;
+      pointerY += e.movementY;
+    };
+    window.addEventListener('mousemove', handleMouseMove);
 
     // Cleanup saat pindah halaman
     return () => {
