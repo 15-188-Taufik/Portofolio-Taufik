@@ -92,13 +92,29 @@ export default function GalaxyBackground() {
     const particles = new THREE.Points(particlesGeometry, particlesMaterial);
     scene.add(particles);
 
-    // --- INTERAKSI MOUSE (Versi React) ---
-    let mouseX = 0;
-    let mouseY = 0;
-    const handleMouseMove = (event: MouseEvent) => {
-      mouseX = event.clientX;
-      mouseY = event.clientY;
-    };
+// --- INTERAKSI POINTER (Mobile & Desktop) ---
+let pointerX = 0;
+let pointerY = 0;
+let isPointerDown = false;
+let lastX = 0;
+let lastY = 0;
+const handlePointerDown = (e: PointerEvent) => {
+  isPointerDown = true;
+  lastX = e.clientX;
+  lastY = e.clientY;
+};
+const handlePointerMove = (e: PointerEvent) => {
+  if (!isPointerDown) return;
+  const deltaX = e.clientX - lastX;
+  const deltaY = e.clientY - lastY;
+  pointerX += deltaX;
+  pointerY += deltaY;
+  lastX = e.clientX;
+  lastY = e.clientY;
+};
+const handlePointerUp = () => {
+  isPointerDown = false;
+};
     
     // Animasi rotasi berdasarkan mouse (sederhana)
     const animate = () => {
@@ -106,8 +122,8 @@ export default function GalaxyBackground() {
       particles.rotation.y += 0.0005;
       
       // Efek parallax sederhana
-      particles.rotation.x += (mouseY * 0.00001);
-      particles.rotation.y += (mouseX * 0.00001);
+      particles.rotation.x += (pointerY * 0.00001);
+      particles.rotation.y += (pointerX * 0.00001);
 
       renderer.render(scene, camera);
     };
@@ -121,12 +137,18 @@ export default function GalaxyBackground() {
     };
 
     window.addEventListener('resize', handleResize);
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('pointerdown', handlePointerDown);
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerup', handlePointerUp);
+    window.addEventListener('pointercancel', handlePointerUp);
 
     // Cleanup saat pindah halaman
     return () => {
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('pointerdown', handlePointerDown);
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerUp);
       renderer.dispose();
     };
   }, []);
