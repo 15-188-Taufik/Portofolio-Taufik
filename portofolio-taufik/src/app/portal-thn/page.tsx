@@ -31,7 +31,7 @@ export default function LoginPage() {
 
     // Timeout fallback 10 detik – cancellable timeout
     let isTimedOut = false;
-    let timeoutHandle: NodeJS.Timeout;
+    let timeoutHandle: NodeJS.Timeout | null = null;
     const timeoutPromise = new Promise<null>((_, reject) => {
       timeoutHandle = setTimeout(() => {
         isTimedOut = true;
@@ -52,7 +52,7 @@ export default function LoginPage() {
       ]);
 
       // If signIn resolved first, cancel the timeout to avoid stray error log
-      if (!isTimedOut) clearTimeout(timeoutHandle);
+      if (!isTimedOut && timeoutHandle) clearTimeout(timeoutHandle);
       if (isTimedOut) return; // Prevent further processing if timeout already fired
 
       console.log("[Login-Form] Hasil respon dari NextAuth:", res);
