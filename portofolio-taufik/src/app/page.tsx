@@ -60,7 +60,7 @@ export default async function Home() {
           <h1 className="text-5xl md:text-7xl font-heading font-black text-white mb-6 leading-tight">
             TAUFIK <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#CFB53B] to-[#FFF44F]">HIDAYAT</span>
           </h1>
-          <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-10">
+          <p className="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-10 drop-shadow-md">
             {settings.heroSubtitle || "Seorang mahasiswa Informatika ITERA yang gemar mengubah baris kode menjadi pengalaman web yang estetis dan fungsional."}
           </p>
 
@@ -134,7 +134,7 @@ export default async function Home() {
       {/* =========== Footer =========== */}
       <footer id="contact" className="py-12 border-t border-white/10 bg-[#050505] text-center">
         <h2 className="text-2xl font-bold text-white mb-6">Let's Work Together</h2>
-        <div className="flex justify-center gap-8 mb-8">
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
           <a href="https://github.com/15-188-Taufik" target="_blank" className="text-gray-400 hover:text-white hover:scale-110 transition text-2xl">GitHub</a>
           <a href="https://www.instagram.com/thnst95" target="_blank" className="text-gray-400 hover:text-[#d62976] hover:scale-110 transition text-2xl">Instagram</a>
           <a href="mailto:taufik.hidayatnst02@gmail.com" className="text-gray-400 hover:text-[#CFB53B] hover:scale-110 transition text-2xl">Email</a>
